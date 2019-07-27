@@ -1,0 +1,51 @@
+name: rgb
+version: git
+summary: RBG LED Strip Tester
+description: |
+  Tests an RGB strip.
+
+
+base: core18
+
+confinement: devmode
+grade: devel
+
+parts:
+  lib:
+    plugin: scons
+    source: https://github.com/jgarff/rpi_ws281x.git
+    build-packages:
+      - g++
+      - gcc
+      - libc6-dev
+      - make
+      - pkg-config
+    override-build: |
+      scons
+      cp *.a /usr/local/lib/
+      cp *.h /usr/local/include/
+      scons -c
+  ws281x:
+    plugin: go
+    go-channel: stable
+    # go-packages:
+    #   - github.com/rpi-ws281x/rpi-ws281x-go
+    source: https://github.com/rpi-ws281x/rpi-ws281x-go.git
+    source-type: git
+    after:
+      - lib
+  rgb:
+    plugin: go
+    go-channel: stable
+    # go-importpath: 
+    # go-packages:
+    #   - github.com/rpi-ws281x/rpi-ws281x-go
+    source: .
+    source-type: local
+    after:
+      - lib
+      - ws281x
+apps:
+  rgb:
+    command: bin/project
+    # daemon: simple
