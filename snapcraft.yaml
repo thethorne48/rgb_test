@@ -49,5 +49,5 @@ parts:
       - ws281x
 apps:
   rgb:
-    command: bin/project
+    command: bin/rgbtest.rgb
     # daemon: simple
