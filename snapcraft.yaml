@@ -1,9 +1,11 @@
-name: rgb
+name: rgbtest
 version: git
 summary: RBG LED Strip Tester
 description: |
   Tests an RGB strip.
 
+architectures:
+  - armhf
 
 base: core18
 
