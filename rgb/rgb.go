@@ -38,7 +38,7 @@ var defaultOptions = ws.Option{
 	DmaNum:    ws.DefaultDmaNum,
 	Channels: []ws.ChannelOption{
 		{
-			GpioPin:    23,
+			GpioPin:    18,
 			LedCount:   count,
 			Brightness: ws.DefaultBrightness,
 			StripeType: ws.WS2812Strip,
