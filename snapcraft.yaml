@@ -27,27 +27,31 @@ parts:
       cp *.a /usr/local/lib/
       cp *.h /usr/local/include/
       scons -c
-  ws281x:
-    plugin: go
-    go-channel: stable
-    # go-packages:
-    #   - github.com/rpi-ws281x/rpi-ws281x-go
-    source: https://github.com/rpi-ws281x/rpi-ws281x-go.git
-    source-type: git
-    after:
-      - lib
+  # ws281x:
+  #   plugin: go
+  #   go-channel: stable
+  #   go-importpath: github.com/rpi-ws281x/rpi-ws281x-go
+  #   # go-packages:
+  #   #   - github.com/rpi-ws281x/rpi-ws281x-go
+  #   source: https://github.com/rpi-ws281x/rpi-ws281x-go.git
+  #   source-type: git
+  #   after:
+  #     - lib
   rgb:
     plugin: go
     go-channel: stable
-    # go-importpath: 
+    # go-importpath: github.com/rpi-ws281x/rpi-ws281x-go
     # go-packages:
     #   - github.com/rpi-ws281x/rpi-ws281x-go
-    source: .
-    source-type: local
+    #   - https://github.com/rpi-ws281x/rpi-ws281x-go.git
+    source: rgb
     after:
       - lib
-      - ws281x
+      # - ws281x
+    # override-build:
+    #   pwd
+    #   go build -o /root/prime/bin/rgb rgb.go
 apps:
   rgb:
-    command: bin/rgbtest.rgb
+    command: bin/rgb
     # daemon: simple

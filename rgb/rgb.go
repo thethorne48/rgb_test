@@ -48,6 +48,7 @@ var defaultOptions = ws.Option{
 	},
 }
 
+// main test program
 func main() {
 	ws2812, err := ws.MakeWS2811(&defaultOptions)
 	if err != nil {
@@ -56,11 +57,11 @@ func main() {
 	}
 	defer ws2812.Fini()
 	err = ws2812.Init()
+	fmt.Println("Press Ctr-C to quit.")
 	if err != nil {
 		fmt.Println(err)
 	} else {
 		for ok := true; ok; {
-			fmt.Println("Press Ctr-C to quit.")
 			fmt.Println("Creating blue color wipe")
 			err = colorWipe(ws2812, uint32(0x000020))
 			if err != nil {
