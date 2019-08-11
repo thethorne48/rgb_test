@@ -1,86 +1,67 @@
-// Copyright 2018 Jacques Supcik / HEIA-FR
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package main
 
 import (
+	"fmt"
+	"os"
 	"time"
 
-	ws2811 "github.com/rpi-ws281x/rpi-ws281x-go"
+	"github.com/jgarff/rpi_ws281x/golang/ws2811"
 )
 
 const (
-	brightness = 90
-	ledCounts  = 150
-	sleepTime  = 50
+	pin        = 18
+	count      = 150
+	brightness = 100
 )
 
-type wsEngine interface {
-	Init() error
-	Render() error
-	Wait() error
-	Fini()
-	Leds(channel int) []uint32
-}
-
-func checkError(err error) {
+func main() {
+	defer ws2811.Fini()
+	err := ws2811.Init(pin, count, brightness)
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+	} else {
+		fmt.Println("Press Ctr-C to quit.")
+		fmt.Println("Creating blue color wipe")
+		err = colorWipe(uint32(0x000020))
+		if err != nil {
+			fmt.Println("Error during wipe " + err.Error())
+			os.Exit(-1)
+		}
+
+		fmt.Println("Creating red color wipe")
+		err = colorWipe(uint32(0x002000))
+		if err != nil {
+			fmt.Println("Error during wipe " + err.Error())
+			os.Exit(-1)
+		}
+
+		fmt.Println("Creating green color wipe")
+		err = colorWipe(uint32(0x200000))
+		if err != nil {
+			fmt.Println("Error during wipe " + err.Error())
+			os.Exit(-1)
+		}
+
+		fmt.Println("Creating blank color wipe")
+		err = colorWipe(uint32(0x000000))
+		if err != nil {
+			fmt.Println("Error during wipe " + err.Error())
+			os.Exit(-1)
+		}
 	}
 }
 
-type colorWipe struct {
-	ws wsEngine
-}
-
-func (cw *colorWipe) setup() error {
-	return cw.ws.Init()
-}
-
-func (cw *colorWipe) display(color uint32) error {
-	for i := 0; i < len(cw.ws.Leds(0)); i++ {
-		cw.ws.Leds(0)[i] = color
-		if err := cw.ws.Render(); err != nil {
+func colorWipe(color uint32) error {
+	for i := 0; i < count; i++ {
+		ws2811.SetLed(i, color)
+		err := ws2811.Render()
+		if err != nil {
+			ws2811.Clear()
 			return err
 		}
-		time.Sleep(sleepTime * time.Millisecond)
+
+		time.Sleep(5 * time.Millisecond)
 	}
+
 	return nil
-}
-
-func main() {
-	opt := ws2811.DefaultOptions
-	opt.Channels[0].GpioPin = 12
-	opt.Channels[0].Brightness = brightness
-	opt.Channels[0].LedCount = ledCounts
-
-	dev, err := ws2811.MakeWS2811(&opt)
-	checkError(err)
-
-	cw := &colorWipe{
-		ws: dev,
-	}
-	checkError(cw.setup())
-	defer dev.Fini()
-
-	println("Wiping blue")
-	cw.display(uint32(0x0000ff))
-	println("Wiping green")
-	cw.display(uint32(0x00ff00))
-	println("Wiping red")
-	cw.display(uint32(0xff0000))
-	println("Wiping off")
-	cw.display(uint32(0x000000))
-
 }
