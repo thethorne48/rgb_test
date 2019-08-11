@@ -22,7 +22,7 @@ import (
 
 const (
 	brightness = 90
-	ledCounts  = 64
+	ledCounts  = 150
 	sleepTime  = 50
 )
 
@@ -61,6 +61,7 @@ func (cw *colorWipe) display(color uint32) error {
 
 func main() {
 	opt := ws2811.DefaultOptions
+	opt.Channels[0].GpioPin = 12
 	opt.Channels[0].Brightness = brightness
 	opt.Channels[0].LedCount = ledCounts
 
@@ -73,9 +74,13 @@ func main() {
 	checkError(cw.setup())
 	defer dev.Fini()
 
+	println("Wiping blue")
 	cw.display(uint32(0x0000ff))
+	println("Wiping green")
 	cw.display(uint32(0x00ff00))
+	println("Wiping red")
 	cw.display(uint32(0xff0000))
+	println("Wiping off")
 	cw.display(uint32(0x000000))
 
 }
