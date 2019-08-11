@@ -12,6 +12,7 @@ const (
 	pin        = 18
 	count      = 150
 	brightness = 100
+	maxAngle   = 255
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 		fmt.Println("Creating rainbow circle")
 		index := 0
 		for {
-			err = rainbowCycle(index % 360)
+			err = rainbowCycle(index % maxAngle)
 			if err != nil {
 				fmt.Println("Error during wipe " + err.Error())
 				os.Exit(-1)
@@ -36,14 +37,14 @@ func main() {
 
 func rainbowCycle(angle int) error {
 	for i := 0; i < count; i++ {
-		ws2811.SetLed(i, RainbowColor((angle*360)/150))
+		ws2811.SetLed(i, RainbowColor((((angle+i)%maxAngle)*maxAngle)/150))
 	}
 	err := ws2811.Render()
 	if err != nil {
 		ws2811.Clear()
 		return err
 	}
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(50 * time.Millisecond)
 	return nil
 }
 

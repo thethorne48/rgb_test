@@ -57,5 +57,5 @@ func Color(red uint8, green uint8, blue uint8) uint32 {
 // RainbowColor takes an angle and creates a color from it.
 // To use, simply map your light strip to 360 degrees of colors.
 func RainbowColor(angle int) uint32 {
-	return Color(LightDefaults[(angle+120)%360], LightDefaults[angle%360], LightDefaults[(angle+240)%360])
+	return Color(LightDefaults[(angle+len(LightDefaults)/3)%len(LightDefaults)], LightDefaults[angle%len(LightDefaults)], LightDefaults[(angle+(len(LightDefaults)/3)*2)%len(LightDefaults)])
 }
