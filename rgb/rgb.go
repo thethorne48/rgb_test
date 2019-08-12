@@ -19,6 +19,7 @@ func main() {
 	opt := ws.DefaultOptions
 	opt.Channels[0].LedCount = count
 	opt.Channels[0].Brightness = brightness
+	opt.Channels[0].StripeType = ws.WS2812Strip
 
 	led, err := ws.MakeWS2811(&opt)
 	if err != nil {
@@ -31,6 +32,13 @@ func main() {
 		// desc := ws.StatusDesc(err.)
 		panic(err)
 	}
+
+	desc := ws.HwDetect()
+	println(desc.Desc)
+	println(desc.Type)
+	println(desc.Version)
+	println(desc.PeriphBase)
+	println(desc.VideocoreBase)
 
 	fmt.Println("Press Ctr-C to quit.")
 	if err != nil {
