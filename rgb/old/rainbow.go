@@ -33,7 +33,7 @@ func main() {
 		fmt.Println("Press Ctr-C to quit.")
 
 		fmt.Println("Creating cosine rainbow")
-		for index := 0; true; index++ {
+		for index := 0; i <= 1000; index++ {
 			err = rainbowCosCycle(colorValues, index)
 			if err != nil {
 				fmt.Println("Error during cycle " + err.Error())
