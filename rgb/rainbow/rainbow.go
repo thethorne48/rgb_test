@@ -16,6 +16,13 @@ const (
 	maxAngle   = 360
 )
 
+// RGB - a set of arrays to hold pre-calculated RGB values
+type RGB struct {
+	red   []uint8
+	green []uint8
+	blue  []uint8
+}
+
 var (
 	floats = RGB{
 		red:   []uint8{},
@@ -23,13 +30,6 @@ var (
 		blue:  []uint8{},
 	}
 )
-
-// RGB - a set of arrays to hold pre-calculated RGB values
-type RGB struct {
-	red   []uint8
-	green []uint8
-	blue  []uint8
-}
 
 func main() {
 	defer ws2811.Fini()
