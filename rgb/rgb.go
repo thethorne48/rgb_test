@@ -11,7 +11,7 @@ import (
 const (
 	pin        = 18
 	count      = 150
-	brightness = 100
+	brightness = 150
 )
 
 // main test program
@@ -20,6 +20,7 @@ func main() {
 	opt.Channels[0].LedCount = count
 	opt.Channels[0].Brightness = brightness
 	opt.Channels[0].StripeType = ws.WS2812Strip
+	opt.Channels[0].GpioPin = pin
 
 	led, err := ws.MakeWS2811(&opt)
 	if err != nil {

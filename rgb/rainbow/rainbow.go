@@ -16,6 +16,14 @@ const (
 	maxAngle   = 360
 )
 
+var (
+	floats = RGB{
+		red:   []uint8{},
+		green: []uint8{},
+		blue:  []uint8{},
+	}
+)
+
 // RGB - a set of arrays to hold pre-calculated RGB values
 type RGB struct {
 	red   []uint8
@@ -49,6 +57,7 @@ func main() {
 			0x00FFFF, // purple
 			0x0000FF, // blue
 			0xFF00FF, // cyan
+			0x000000, // blank
 		}
 		for i := 0; i < len(colors); i++ {
 			err = colorFlash(colors[i])
@@ -62,11 +71,11 @@ func main() {
 }
 
 func initRange(ledCount int) RGB {
-	floats := RGB{
-		red:   []uint8{},
-		green: []uint8{},
-		blue:  []uint8{},
-	}
+	// floats := RGB{
+	// 	red:   []uint8{},
+	// 	green: []uint8{},
+	// 	blue:  []uint8{},
+	// }
 
 	segmentSize := (math.Pi * 3) / float64(ledCount)
 	maxBrightness := float64(180)
@@ -91,6 +100,7 @@ func initRange(ledCount int) RGB {
 
 func rainbowCosCycle(floats RGB, seed int) error {
 	for i := 0; i < count; i++ {
+		fmt.Sprintf("i: %d - seed: %d - color: %X\n", i, seed, RainbowCosColor(floats, i+seed))
 		ws2811.SetLed(i, RainbowCosColor(floats, i+seed))
 	}
 	err := ws2811.Render()
@@ -131,3 +141,8 @@ func colorFlash(color uint32) error {
 
 	return nil
 }
+
+// func crossFade(newColor uint32) (err error) {
+// 	ws2811.
+// 	return nil
+// }

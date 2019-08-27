@@ -48,6 +48,13 @@ var LightDefaults = [...]uint8{
 	0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0}
 
+// RGB - a set of arrays to hold pre-calculated RGB values
+type RGB struct {
+	red   []uint8
+	green []uint8
+	blue  []uint8
+}
+
 // SinAppend special function to build my SIN map slices
 func SinAppend(slice []uint8, value float64, maxBrightness float64) []uint8 {
 	if value >= 0 {
