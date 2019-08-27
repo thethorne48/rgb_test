@@ -100,7 +100,7 @@ func initRange(ledCount int) RGB {
 
 func rainbowCosCycle(floats RGB, seed int) error {
 	for i := 0; i < count; i++ {
-		fmt.Sprintf("i: %d - seed: %d - color: %X\n", i, seed, RainbowCosColor(floats, i+seed))
+		fmt.Printf("i: %d - seed: %d - color: %X\n", i, seed, RainbowCosColor(floats, i+seed))
 		ws2811.SetLed(i, RainbowCosColor(floats, i+seed))
 	}
 	err := ws2811.Render()
