@@ -10,10 +10,12 @@ import (
 )
 
 const (
-	pin        = 18
-	count      = 150
-	brightness = 100
-	maxAngle   = 360
+	pin           = 18
+	count         = 150
+	brightness    = 100
+	maxAngle      = 360
+	maxBrightness = float64(180)
+	piDivision    = float64(2)
 )
 
 // RGB - a set of arrays to hold pre-calculated RGB values
@@ -78,8 +80,6 @@ func initRange(ledCount int) RGB {
 	// }
 
 	segmentSize := (math.Pi * 3) / float64(ledCount)
-	maxBrightness := float64(180)
-	piDivision := float64(2)
 
 	for i := math.Pi * -1; i <= math.Pi*2; i += segmentSize {
 		red := math.Sin(i/piDivision + math.Pi/2)
@@ -101,6 +101,13 @@ func initRange(ledCount int) RGB {
 func rainbowCosCycle(floats RGB, seed int) error {
 	for i := 0; i < count; i++ {
 		fmt.Printf("i: %d - seed: %d - color: %X\n", i, seed, RainbowCosColor(floats, i+seed))
+		hexColor := RainbowCosColor(floats, i+seed)
+		white := float64((hexColor&0xFF000000)>>24) / maxBrightness
+		red := float64((hexColor&0x00FF0000)>>16) / maxBrightness
+		green := float64((hexColor&0x0000FF00)>>8) / maxBrightness
+		blue := float64(hexColor&0x000000FF) / maxBrightness
+		fmt.Printf("white: %f - red: %f - green: %f - blue: %f\n", white, red, green, blue)
+
 		ws2811.SetLed(i, RainbowCosColor(floats, i+seed))
 	}
 	err := ws2811.Render()
