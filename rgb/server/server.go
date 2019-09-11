@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
+	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/jgarff/rpi_ws281x/golang/ws2811"
@@ -25,6 +28,12 @@ type RGB struct {
 	blue  []uint8
 }
 
+type response struct {
+	status  int
+	message string
+	color   RGB
+}
+
 var (
 	floats = RGB{
 		red:   []uint8{},
@@ -33,42 +42,39 @@ var (
 	}
 )
 
+func render(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	red, _ := strconv.Atoi(query["red"][0])
+	green, _ := strconv.Atoi(query["green"][0])
+	blue, _ := strconv.Atoi(query["blue"][0])
+	color := Color(uint8(red), uint8(green), uint8(blue))
+	err := colorFlash(color)
+	if err != nil {
+		fmt.Println("Error during flash " + err.Error())
+		os.Exit(-1)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	js, _ := json.Marshal(response{status: 200, message: "ok"})
+	w.Write(js)
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	js, _ := json.Marshal(response{status: 200, message: "healthy"})
+	w.Write(js)
+}
+
 func main() {
 	defer ws2811.Fini()
-	colorValues := initRange(count)
 	err := ws2811.Init(pin, count, brightness)
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println("Press Ctr-C to quit.")
-
-		fmt.Println("Creating cosine rainbow")
-		for index := 0; index <= 1000; index++ {
-			err = rainbowCosCycle(colorValues, index)
-			if err != nil {
-				fmt.Println("Error during cycle " + err.Error())
-				os.Exit(-1)
-			}
+		http.HandleFunc("/health", health)
+		http.HandleFunc("/render", render)
+		if err := http.ListenAndServe(":8080", nil); err != nil {
+			panic(err)
 		}
-
-		fmt.Println("Creating color flash")
-		colors := [...]uint32{
-			0xFF0000, // green
-			0x888800, // yellow
-			0x00FF00, // red
-			0x00FFFF, // purple
-			0x0000FF, // blue
-			0xFF00FF, // cyan
-			0x000000, // blank
-		}
-		for i := 0; i < len(colors); i++ {
-			err = colorFlash(colors[i])
-			if err != nil {
-				fmt.Println("Error during flash " + err.Error())
-				os.Exit(-1)
-			}
-		}
-
 	}
 }
 
